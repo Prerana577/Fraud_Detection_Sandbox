@@ -1,0 +1,137 @@
+txn_id,timestamp,user_id,home_city,user_avg_amount_inr,amount_inr,merchant,city,lat,lon,status,risk_score,decision,reasons,scenario
+T-80001,2026-10-28 14:01:40,U-1014,Mumbai,4000,3834,Online shopping,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80002,2026-10-28 14:02:22,U-1012,Delhi,4000,3509,Mobile recharge,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80003,2026-10-28 14:03:43,U-1005,Pune,300,374,Restaurant,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80004,2026-10-28 14:05:07,U-2002,Mumbai,2000,1628,Fuel station,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80005,2026-10-28 14:05:14,U-2008,Kolkata,800,1022,Grocery store,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80006,2026-10-28 14:05:22,U-2009,Jaipur,1000,755,Metro recharge,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80007,2026-10-28 14:05:24,U-2007,Delhi,800,612,Online shopping,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80008,2026-10-28 14:05:42,U-2005,Pune,2000,2332,Restaurant,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80009,2026-10-28 14:05:44,U-2001,Bengaluru,800,735,Fuel station,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80010,2026-10-28 14:05:50,U-2003,Chennai,800,478,Mobile recharge,Chennai,13.0827,80.2707,success,0,APPROVE,,Normal
+T-80011,2026-10-28 14:05:56,U-2004,Hyderabad,500,305,Pharmacy,Hyderabad,17.385,78.4867,success,0,APPROVE,,Normal
+T-80012,2026-10-28 14:07:09,U-1002,Ahmedabad,2000,1117,Grocery store,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80013,2026-10-28 14:09:56,U-1001,Pune,600,278,Online shopping,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80014,2026-10-28 14:18:04,U-1003,Kolkata,1000,1169,Restaurant,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80015,2026-10-28 14:18:19,U-1012,Delhi,4000,5235,Restaurant,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80016,2026-10-28 14:18:39,U-1001,Pune,600,265,Pharmacy,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80017,2026-10-28 14:18:58,U-1006,Kolkata,600,248,Mobile recharge,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80018,2026-10-28 14:19:04,U-2002,Mumbai,2000,2074,Pharmacy,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80019,2026-10-28 14:19:05,U-2008,Kolkata,800,570,Grocery store,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80020,2026-10-28 14:19:09,U-2003,Chennai,800,1001,Metro recharge,Chennai,13.0827,80.2707,success,0,APPROVE,,Normal
+T-80021,2026-10-28 14:19:13,U-1005,Pune,300,251,Mobile recharge,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80022,2026-10-28 14:19:14,U-2004,Hyderabad,500,549,Grocery store,Hyderabad,17.385,78.4867,success,0,APPROVE,,Normal
+T-80023,2026-10-28 14:19:18,U-2007,Delhi,800,728,Grocery store,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80024,2026-10-28 14:19:23,U-2009,Jaipur,1000,516,Online shopping,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80025,2026-10-28 14:19:45,U-2005,Pune,2000,1690,Online shopping,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80026,2026-10-28 14:19:59,U-2001,Bengaluru,800,758,Restaurant,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80027,2026-10-28 14:20:58,U-1004,Kolkata,300,316,Online shopping,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80028,2026-10-28 14:21:04,U-1009,Jaipur,300,375,Online shopping,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80029,2026-10-28 14:21:50,U-1007,Jaipur,2000,937,Grocery store,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80030,2026-10-28 14:30:28,U-1012,Delhi,4000,2708,Fuel station,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80031,2026-10-28 14:32:05,U-1008,Ahmedabad,2000,1054,Pharmacy,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80032,2026-10-28 14:32:35,U-1013,Pune,2000,1952,Grocery store,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80033,2026-10-28 14:33:04,U-2002,Mumbai,2000,1340,Fuel station,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80034,2026-10-28 14:33:06,U-1006,Kolkata,600,413,Grocery store,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80035,2026-10-28 14:33:07,U-2007,Delhi,800,1030,Mobile recharge,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80036,2026-10-28 14:33:25,U-2004,Hyderabad,500,604,Restaurant,Hyderabad,17.385,78.4867,success,0,APPROVE,,Normal
+T-80037,2026-10-28 14:33:25,U-2005,Pune,2000,1543,Restaurant,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80038,2026-10-28 14:33:29,U-2009,Jaipur,1000,852,Grocery store,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80039,2026-10-28 14:33:42,U-2003,Chennai,800,634,Fuel station,Chennai,13.0827,80.2707,success,0,APPROVE,,Normal
+T-80040,2026-10-28 14:33:53,U-2001,Bengaluru,800,686,Pharmacy,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80041,2026-10-28 14:33:57,U-2008,Kolkata,800,899,Fuel station,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80042,2026-10-28 14:35:40,U-1011,Mumbai,2000,991,Metro recharge,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80043,2026-10-28 14:37:08,U-1001,Pune,600,286,Grocery store,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80044,2026-10-28 14:38:28,U-1005,Pune,300,147,Pharmacy,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80045,2026-10-28 14:39:44,U-1002,Ahmedabad,2000,1479,Mobile recharge,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80046,2026-10-28 14:45:28,U-1014,Mumbai,4000,4944,Grocery store,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80047,2026-10-28 14:47:29,U-1006,Kolkata,600,517,Fuel station,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80048,2026-10-28 14:48:05,U-1002,Ahmedabad,2000,1027,Online shopping,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80049,2026-10-28 14:50:57,U-1010,Bengaluru,300,435,Fuel station,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80050,2026-10-28 14:51:45,U-1011,Mumbai,2000,1819,Metro recharge,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80051,2026-10-28 14:52:57,U-1008,Ahmedabad,2000,1857,Fuel station,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80052,2026-10-28 14:55:00,U-2001,Bengaluru,800,180,Coffee shop,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Impossible travel + large amount
+T-80053,2026-10-28 15:00:00,U-2001,Bengaluru,800,6200,Airline booking,Guwahati,26.1445,91.7362,success,75,BLOCK,"Impossible travel: Bengaluru -> Guwahati in 5 min (~2,080 km); Amount 7.8x user average",Impossible travel + large amount
+T-80054,2026-10-28 15:01:22,U-1010,Bengaluru,300,193,Restaurant,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80055,2026-10-28 15:01:23,U-1003,Kolkata,1000,1032,Online shopping,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80056,2026-10-28 15:01:27,U-1008,Ahmedabad,2000,1117,Metro recharge,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80057,2026-10-28 15:07:30,U-1013,Pune,2000,2508,Online shopping,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80058,2026-10-28 15:07:33,U-1014,Mumbai,4000,3033,Online shopping,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80059,2026-10-28 15:08:33,U-1012,Delhi,4000,2658,Online shopping,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80060,2026-10-28 15:09:14,U-1009,Jaipur,300,377,Fuel station,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80061,2026-10-28 15:10:00,U-2002,Mumbai,2000,450,Restaurant,Mumbai,19.076,72.8777,success,0,APPROVE,,Impossible travel
+T-80062,2026-10-28 15:16:00,U-2002,Mumbai,2000,1800,Hotel booking,Delhi,28.6139,77.209,success,50,FLAG,"Impossible travel: Mumbai -> Delhi in 6 min (~1,148 km)",Impossible travel
+T-80063,2026-10-28 15:18:33,U-1007,Jaipur,2000,1769,Grocery store,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80064,2026-10-28 15:18:48,U-1009,Jaipur,300,322,Mobile recharge,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80065,2026-10-28 15:20:00,U-2003,Chennai,800,300,Grocery store,Chennai,13.0827,80.2707,success,0,APPROVE,,Impossible travel
+T-80066,2026-10-28 15:20:50,U-1008,Ahmedabad,2000,2429,Pharmacy,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80067,2026-10-28 15:21:51,U-1005,Pune,300,301,Restaurant,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80068,2026-10-28 15:22:47,U-1004,Kolkata,300,143,Grocery store,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80069,2026-10-28 15:23:01,U-1010,Bengaluru,300,185,Restaurant,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80070,2026-10-28 15:23:26,U-1003,Kolkata,1000,1363,Metro recharge,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80071,2026-10-28 15:24:39,U-1006,Kolkata,600,450,Restaurant,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80072,2026-10-28 15:28:00,U-2003,Chennai,800,700,Online shopping,Kolkata,22.5726,88.3639,success,50,FLAG,"Impossible travel: Chennai -> Kolkata in 8 min (~1,358 km)",Impossible travel
+T-80073,2026-10-28 15:30:04,U-1013,Pune,2000,2507,Restaurant,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80074,2026-10-28 15:31:26,U-1011,Mumbai,2000,2395,Restaurant,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80075,2026-10-28 15:35:48,U-1007,Jaipur,2000,2122,Grocery store,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80076,2026-10-28 15:38:44,U-1014,Mumbai,4000,2477,Fuel station,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80077,2026-10-28 15:39:24,U-1001,Pune,600,520,Mobile recharge,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80078,2026-10-28 15:40:00,U-2004,Hyderabad,500,100,Online shopping,Hyderabad,17.385,78.4867,success,0,APPROVE,,Velocity burst (card testing)
+T-80079,2026-10-28 15:40:10,U-2004,Hyderabad,500,100,Online shopping,Hyderabad,17.385,78.4867,success,0,APPROVE,,Velocity burst (card testing)
+T-80080,2026-10-28 15:40:20,U-2004,Hyderabad,500,100,Online shopping,Hyderabad,17.385,78.4867,success,0,APPROVE,,Velocity burst (card testing)
+T-80081,2026-10-28 15:40:30,U-2004,Hyderabad,500,100,Online shopping,Hyderabad,17.385,78.4867,success,0,APPROVE,,Velocity burst (card testing)
+T-80082,2026-10-28 15:40:40,U-2004,Hyderabad,500,100,Online shopping,Hyderabad,17.385,78.4867,success,0,APPROVE,,Velocity burst (card testing)
+T-80083,2026-10-28 15:40:50,U-2004,Hyderabad,500,100,Online shopping,Hyderabad,17.385,78.4867,success,30,APPROVE,Velocity: 6 txns in 2 min,Velocity burst (card testing)
+T-80084,2026-10-28 15:41:00,U-2004,Hyderabad,500,100,Online shopping,Hyderabad,17.385,78.4867,success,30,APPROVE,Velocity: 7 txns in 2 min,Velocity burst (card testing)
+T-80085,2026-10-28 15:41:10,U-2004,Hyderabad,500,4000,Electronics store,Hyderabad,17.385,78.4867,success,55,FLAG,Velocity: 8 txns in 2 min; Amount 8.0x user average,Velocity burst + large amount
+T-80086,2026-10-28 15:45:00,U-1007,Jaipur,2000,2047,Online shopping,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80087,2026-10-28 15:47:10,U-1011,Mumbai,2000,861,Online shopping,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80088,2026-10-28 15:48:12,U-1002,Ahmedabad,2000,1619,Online shopping,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80089,2026-10-28 15:49:36,U-1004,Kolkata,300,276,Metro recharge,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80090,2026-10-28 15:50:00,U-2005,Pune,2000,25000,Jewellery store,Pune,18.5204,73.8567,success,25,APPROVE,Amount 12.5x user average,Amount anomaly
+T-80091,2026-10-28 15:52:20,U-1005,Pune,300,405,Fuel station,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80092,2026-10-28 15:52:39,U-1003,Kolkata,1000,717,Grocery store,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80093,2026-10-28 15:53:14,U-1010,Bengaluru,300,326,Online shopping,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80094,2026-10-28 16:00:01,U-1010,Bengaluru,300,278,Metro recharge,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80095,2026-10-28 16:01:04,U-1002,Ahmedabad,2000,2042,Online shopping,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80096,2026-10-28 16:01:06,U-1004,Kolkata,300,140,Metro recharge,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80097,2026-10-28 16:02:45,U-1008,Ahmedabad,2000,1936,Restaurant,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80098,2026-10-28 16:02:56,U-1013,Pune,2000,1111,Online shopping,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80099,2026-10-28 16:03:19,U-1009,Jaipur,300,386,Mobile recharge,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80100,2026-10-28 16:05:00,U-2009,Jaipur,1000,14000,Electronics store,Jaipur,26.9124,75.7873,success,25,APPROVE,Amount 14.0x user average,Amount anomaly
+T-80101,2026-10-28 16:05:33,U-1012,Delhi,4000,2741,Pharmacy,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80102,2026-10-28 16:09:39,U-1001,Pune,600,322,Restaurant,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80103,2026-10-28 16:10:00,U-2007,Delhi,800,800,Online shopping,Delhi,28.6139,77.209,failed,0,APPROVE,,Repeated failed attempts
+T-80104,2026-10-28 16:11:00,U-2007,Delhi,800,800,Online shopping,Delhi,28.6139,77.209,failed,0,APPROVE,,Repeated failed attempts
+T-80105,2026-10-28 16:12:00,U-2007,Delhi,800,800,Online shopping,Delhi,28.6139,77.209,failed,70,BLOCK,3 failed attempts in 10 min: account frozen,Repeated failed attempts
+T-80106,2026-10-28 16:14:00,U-2007,Delhi,800,800,Online shopping,Delhi,28.6139,77.209,failed,70,BLOCK,Account frozen,Repeated failed attempts
+T-80107,2026-10-28 16:17:00,U-1003,Kolkata,1000,963,Restaurant,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80108,2026-10-28 16:17:03,U-1013,Pune,2000,2024,Fuel station,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80109,2026-10-28 16:17:14,U-1012,Delhi,4000,1868,Metro recharge,Delhi,28.6139,77.209,success,0,APPROVE,,Normal
+T-80110,2026-10-28 16:20:17,U-1004,Kolkata,300,334,Metro recharge,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80111,2026-10-28 16:21:50,U-1009,Jaipur,300,364,Restaurant,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80112,2026-10-28 16:22:56,U-1011,Mumbai,2000,2574,Restaurant,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80113,2026-10-28 16:23:47,U-1006,Kolkata,600,867,Metro recharge,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80114,2026-10-28 16:30:00,U-2007,Delhi,800,800,Grocery store,Delhi,28.6139,77.209,success,70,BLOCK,Account frozen,Frozen account follow-up
+T-80115,2026-10-28 16:31:43,U-1007,Jaipur,2000,2888,Online shopping,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80116,2026-10-28 16:33:24,U-1009,Jaipur,300,291,Fuel station,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80117,2026-10-28 16:37:36,U-1004,Kolkata,300,214,Pharmacy,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80118,2026-10-28 16:37:43,U-1014,Mumbai,4000,3836,Mobile recharge,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80119,2026-10-28 16:38:50,U-1013,Pune,2000,1968,Pharmacy,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80120,2026-10-28 16:39:00,U-1008,Ahmedabad,2000,1596,Metro recharge,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80121,2026-10-28 16:39:56,U-1001,Pune,600,865,Online shopping,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80122,2026-10-28 16:40:00,U-2008,Kolkata,800,400,Online shopping,Kolkata,22.5726,88.3639,success,0,APPROVE,,Combined attack
+T-80123,2026-10-28 16:40:20,U-2008,Kolkata,800,400,Online shopping,Kolkata,22.5726,88.3639,success,0,APPROVE,,Combined attack
+T-80124,2026-10-28 16:40:40,U-2008,Kolkata,800,400,Online shopping,Kolkata,22.5726,88.3639,success,0,APPROVE,,Combined attack
+T-80125,2026-10-28 16:41:00,U-2008,Kolkata,800,400,Online shopping,Kolkata,22.5726,88.3639,success,0,APPROVE,,Combined attack
+T-80126,2026-10-28 16:41:20,U-2008,Kolkata,800,400,Online shopping,Kolkata,22.5726,88.3639,success,0,APPROVE,,Combined attack
+T-80127,2026-10-28 16:41:40,U-2008,Kolkata,800,400,Online shopping,Kolkata,22.5726,88.3639,success,30,APPROVE,Velocity: 6 txns in 2 min,Combined attack
+T-80128,2026-10-28 16:42:10,U-2008,Kolkata,800,20000,Electronics store,Mumbai,19.076,72.8777,success,100,BLOCK,"Impossible travel: Kolkata -> Mumbai in 1 min (~1,655 km); Velocity: 6 txns in 2 min; Amount 25.0x user average",Combined attack
+T-80129,2026-10-28 16:45:26,U-1007,Jaipur,2000,955,Restaurant,Jaipur,26.9124,75.7873,success,0,APPROVE,,Normal
+T-80130,2026-10-28 16:45:55,U-1006,Kolkata,600,541,Mobile recharge,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80131,2026-10-28 16:48:30,U-1002,Ahmedabad,2000,1892,Online shopping,Ahmedabad,23.0225,72.5714,success,0,APPROVE,,Normal
+T-80132,2026-10-28 16:50:50,U-1003,Kolkata,1000,567,Pharmacy,Kolkata,22.5726,88.3639,success,0,APPROVE,,Normal
+T-80133,2026-10-28 16:50:52,U-1010,Bengaluru,300,384,Grocery store,Bengaluru,12.9716,77.5946,success,0,APPROVE,,Normal
+T-80134,2026-10-28 16:52:05,U-1005,Pune,300,446,Metro recharge,Pune,18.5204,73.8567,success,0,APPROVE,,Normal
+T-80135,2026-10-28 16:53:05,U-1011,Mumbai,2000,2246,Fuel station,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal
+T-80136,2026-10-28 16:53:09,U-1014,Mumbai,4000,3834,Restaurant,Mumbai,19.076,72.8777,success,0,APPROVE,,Normal

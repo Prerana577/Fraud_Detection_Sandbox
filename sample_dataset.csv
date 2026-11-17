@@ -1,0 +1,21 @@
+user_id,amount,merchant,city,lat,lon,txn_status,is_fraud
+user_01,450,Swiggy,Bengaluru,12.9716,77.5946,success,0
+user_01,820,Starbucks,Bengaluru,12.9716,77.5946,success,0
+user_02,1200,Zara,Mumbai,19.0760,72.8777,success,0
+user_02,350,Uber,Mumbai,19.0760,72.8777,success,0
+user_03,2400,Amazon,Delhi,28.6139,77.2090,success,0
+user_04,95000,Croma Electronics,Bengaluru,12.9716,77.5946,success,1
+user_05,650,Blinkit,Hyderabad,17.3850,78.4867,success,0
+user_05,420,Chai Point,Hyderabad,17.3850,78.4867,success,0
+user_06,1800,Apollo Pharmacy,Chennai,13.0827,80.2707,success,0
+user_06,2100,Shoppers Stop,Guwahati,26.1445,91.7362,success,1
+user_07,500,BookMyShow,Kolkata,22.5726,88.3639,success,0
+user_07,600,Zomato,Kolkata,22.5726,88.3639,success,0
+user_07,750,Uber,Kolkata,22.5726,88.3639,success,0
+user_07,900,BigBasket,Kolkata,22.5726,88.3639,success,0
+user_08,300,Flipkart,Pune,18.5204,73.8567,failed,0
+user_08,300,Flipkart,Pune,18.5204,73.8567,failed,0
+user_08,300,Flipkart,Pune,18.5204,73.8567,failed,1
+user_09,1500,Myntra,Jaipur,26.9124,75.7873,success,0
+user_10,2200,Reliance Digital,Ahmedabad,23.0225,72.5714,success,0
+user_10,85000,Tanishq Jewellery,Ahmedabad,23.0225,72.5714,success,1
