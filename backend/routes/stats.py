@@ -73,3 +73,57 @@ def get_stats():
         "rule_triggers":    rule_triggers,
         "unacked_alerts":   unacked_alerts,
     })
+
+
+@stats_bp.route("/rings", methods=["GET"])
+def get_rings():
+    """Return detected fraud rings and network link data."""
+    from ring_detection import detect_fraud_rings, get_shared_location_users
+    txns = Transaction.query.order_by(Transaction.timestamp.desc()).limit(300).all()
+    rings = detect_fraud_rings(txns, window_seconds=600)
+    shared_locs = get_shared_location_users(txns, window_seconds=120)
+
+    nodes = []
+    edges = []
+    seen_nodes = set()
+
+    for t in txns[:80]:
+        u_node_id = f"user_{t.user_id}"
+        m_node_id = f"merch_{t.merchant.replace(' ', '_')}"
+
+        if u_node_id not in seen_nodes:
+            seen_nodes.add(u_node_id)
+            nodes.append({
+                "id": u_node_id,
+                "label": getattr(t.user, "name", t.user_id),
+                "type": "user",
+                "status": getattr(t.user, "status", "active"),
+                "city": t.city
+            })
+
+        if m_node_id not in seen_nodes:
+            seen_nodes.add(m_node_id)
+            nodes.append({
+                "id": m_node_id,
+                "label": t.merchant,
+                "type": "merchant",
+                "city": t.city
+            })
+
+        edges.append({
+            "source": u_node_id,
+            "target": m_node_id,
+            "decision": t.decision,
+            "amount": t.amount,
+            "risk_score": t.risk_score,
+            "timestamp": t.timestamp.isoformat() if t.timestamp else None
+        })
+
+    return jsonify({
+        "rings": rings,
+        "shared_locations": shared_locs,
+        "graph": {
+            "nodes": nodes,
+            "edges": edges
+        }
+    })
