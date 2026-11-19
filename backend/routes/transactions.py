@@ -163,6 +163,20 @@ def process_transaction(data: dict, socketio=None) -> dict:
         rule_config=rule_config,
     )
 
+    device_info = data.get("device_info") or data.get("device")
+    if not device_info:
+        # Check if CSV had device or ip columns
+        if any(k in data for k in ("device_type", "ip_type", "ip_address", "vpn")):
+            device_info = {
+                "device_type": str(data.get("device_type") or "Mobile (Android)"),
+                "os": str(data.get("os") or "Android 14"),
+                "browser": str(data.get("browser") or "Chrome Mobile"),
+                "ip_type": str(data.get("ip_type") or "Residential"),
+                "vpn_detected": bool(data.get("vpn") or data.get("vpn_detected") or False),
+                "device_trust": int(data.get("device_trust") or 85),
+                "ip_address": str(data.get("ip_address") or "103.21.244.12"),
+            }
+
     # ── Persist transaction ───────────────────────────────────────────────────
     txn = Transaction(
         user_id    = user.user_id,
@@ -176,6 +190,8 @@ def process_transaction(data: dict, socketio=None) -> dict:
         risk_score = result.score,
         decision   = result.decision,
         reasons    = result.reasons,
+        latency_ms = result.latency_ms,
+        device_info= device_info,
     )
     db.session.add(txn)
 
@@ -349,6 +365,10 @@ def upload_csv():
             res = process_transaction(payload, socketio=socketio)
             counts[res["decision"]] = counts.get(res["decision"], 0) + 1
             processed.append(res)
+
+            # Smooth streaming throttle so frontend receives animated events with audio
+            if stream and socketio and row_num <= 40:
+                time.sleep(0.05)
 
             # Check for Kaggle / custom ground truth
             is_actual_fraud = None

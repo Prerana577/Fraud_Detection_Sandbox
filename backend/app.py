@@ -64,6 +64,7 @@ def create_app(config_class=Config) -> Flask:
     from routes.notify_routes  import notify_bp
     from routes.replay_routes  import replay_bp
     from routes.auth_routes    import auth_bp
+    from routes.backtest_routes import backtest_bp
 
     app.register_blueprint(txn_bp)
     app.register_blueprint(stats_bp)
@@ -75,6 +76,7 @@ def create_app(config_class=Config) -> Flask:
     app.register_blueprint(notify_bp)
     app.register_blueprint(replay_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(backtest_bp)
 
     # ── Database + seed ───────────────────────────────────────────────────────
     with app.app_context():
