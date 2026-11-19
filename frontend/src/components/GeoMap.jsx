@@ -41,12 +41,41 @@ const CITY_COORDS = {
   ahmedabad: [23.0225, 72.5714],
 }
 
+const MAP_THEMES = {
+  google_roadmap: {
+    name: 'Google Maps (Road)',
+    url: 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+    attribution: '&copy; Google Maps',
+    maxZoom: 20,
+  },
+  google_satellite: {
+    name: 'Google Satellite',
+    url: 'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
+    attribution: '&copy; Google Maps Satellite',
+    maxZoom: 20,
+  },
+  google_terrain: {
+    name: 'Google Terrain',
+    url: 'https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}',
+    attribution: '&copy; Google Maps Terrain',
+    maxZoom: 20,
+  },
+  dark_voyager: {
+    name: 'Dark Mode (Voyager)',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; CARTO &copy; OpenStreetMap',
+    maxZoom: 19,
+  },
+}
+
 export default function GeoMap({ transactions = [] }) {
   const mapContainerRef = useRef(null)
   const mapInstanceRef = useRef(null)
+  const currentTileLayerRef = useRef(null)
   const markersLayerRef = useRef(null)
   const arcsLayerRef = useRef(null)
 
+  const [mapTheme, setMapTheme] = useState('google_roadmap') // 'google_roadmap' | 'google_satellite' | 'google_terrain' | 'dark_voyager'
   const [filter, setFilter] = useState('all') // 'all' | 'fraud' | 'travel'
   const [activeTravels, setActiveTravels] = useState([])
 
@@ -60,14 +89,14 @@ export default function GeoMap({ transactions = [] }) {
       zoom: 5,
       zoomControl: true,
       minZoom: 4,
-      maxZoom: 12,
+      maxZoom: 18,
     })
 
-    // CartoDB Dark Matter tiles for sleek FinTech dark-mode theme
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap contributors',
-      subdomains: 'abcd',
-      maxZoom: 19,
+    // Default to Google Maps Roadmap
+    const themeConfig = MAP_THEMES.google_roadmap
+    currentTileLayerRef.current = L.tileLayer(themeConfig.url, {
+      attribution: themeConfig.attribution,
+      maxZoom: themeConfig.maxZoom,
     }).addTo(map)
 
     markersLayerRef.current = L.layerGroup().addTo(map)
@@ -79,6 +108,26 @@ export default function GeoMap({ transactions = [] }) {
       mapInstanceRef.current = null
     }
   }, [])
+
+  // Switch Tile Layer when mapTheme changes
+  useEffect(() => {
+    if (!mapInstanceRef.current) return
+    const themeConfig = MAP_THEMES[mapTheme] || MAP_THEMES.google_roadmap
+
+    if (currentTileLayerRef.current) {
+      mapInstanceRef.current.removeLayer(currentTileLayerRef.current)
+    }
+
+    currentTileLayerRef.current = L.tileLayer(themeConfig.url, {
+      attribution: themeConfig.attribution,
+      maxZoom: themeConfig.maxZoom,
+      subdomains: themeConfig.url.includes('{s}') ? 'abcd' : '',
+    }).addTo(mapInstanceRef.current)
+
+    // Bring markers and arcs to front
+    markersLayerRef.current?.bringToFront?.()
+    arcsLayerRef.current?.bringToFront?.()
+  }, [mapTheme])
 
   // Update Markers and Flight Arcs when transactions or filter changes
   useEffect(() => {
@@ -177,48 +226,74 @@ export default function GeoMap({ transactions = [] }) {
       <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--color-border)' }}>
         <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
 
-        {/* Map Top-Right Filter Bar */}
+        {/* Map Top-Right Filter & Theme Bar */}
         <div style={{
           position: 'absolute',
           top: 12,
           right: 12,
           zIndex: 1000,
-          background: 'rgba(15, 23, 42, 0.85)',
+          background: 'rgba(15, 23, 42, 0.9)',
           backdropFilter: 'blur(8px)',
           padding: '6px 10px',
           borderRadius: 8,
-          border: '1px solid rgba(255,255,255,0.1)',
+          border: '1px solid rgba(255,255,255,0.15)',
           display: 'flex',
           gap: 6,
+          alignItems: 'center',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
         }}>
+          {/* Map Layer Switcher (Google Maps / Satellite / Dark) */}
+          <select
+            value={mapTheme}
+            onChange={(e) => setMapTheme(e.target.value)}
+            style={{
+              padding: '4px 8px',
+              borderRadius: 6,
+              background: '#1e293b',
+              color: '#f8fafc',
+              border: '1px solid #475569',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+            title="Switch Map Tiles"
+          >
+            <option value="google_roadmap">🗺️ Google Maps</option>
+            <option value="google_satellite">🛰️ Google Satellite</option>
+            <option value="google_terrain">⛰️ Google Terrain</option>
+            <option value="dark_voyager">🌙 Dark Mode</option>
+          </select>
+
+          <div style={{ width: 1, height: 16, background: 'rgba(255,255,255,0.2)' }} />
+
           <button
             className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-ghost'}`}
-            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            style={{ padding: '4px 8px', fontSize: '0.75rem' }}
             onClick={() => setFilter('all')}
           >
             All Live Txns
           </button>
           <button
             className={`btn ${filter === 'fraud' ? 'btn-warning' : 'btn-ghost'}`}
-            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            style={{ padding: '4px 8px', fontSize: '0.75rem' }}
             onClick={() => setFilter('fraud')}
           >
             Fraud Only
           </button>
           <button
             className={`btn ${filter === 'travel' ? 'btn-danger' : 'btn-ghost'}`}
-            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            style={{ padding: '4px 8px', fontSize: '0.75rem' }}
             onClick={() => setFilter('travel')}
           >
             ✈ Travel Arcs ({activeTravels.length})
           </button>
           <button
             className="btn btn-ghost"
-            style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+            style={{ padding: '4px 8px', fontSize: '0.75rem' }}
             onClick={resetView}
-            title="Reset Map View"
+            title="Reset Map View to India"
           >
-            ⟲ Reset
+            ⟲
           </button>
         </div>
       </div>
