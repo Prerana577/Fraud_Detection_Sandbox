@@ -6,7 +6,8 @@ import React, { useMemo } from 'react'
  */
 export default function SlaSpeedometer({ transactions = [] }) {
   const metrics = useMemo(() => {
-    const scored = (transactions || []).filter(t => t.latency_ms != null && t.latency_ms > 0)
+    const safeTxns = Array.isArray(transactions) ? transactions : []
+    const scored = safeTxns.filter(t => t && t.latency_ms != null && Number(t.latency_ms) > 0)
     if (!scored.length) {
       return {
         avg: 3.4,
@@ -20,9 +21,9 @@ export default function SlaSpeedometer({ transactions = [] }) {
     }
 
     const windowTxns = scored.slice(0, 30)
-    const latencies = windowTxns.map(t => Number(t.latency_ms))
+    const latencies = windowTxns.map(t => Number(t.latency_ms) || 3.2)
     const sum = latencies.reduce((a, b) => a + b, 0)
-    const avg = Number((sum / latencies.length).toFixed(1))
+    const avg = Number((sum / (latencies.length || 1)).toFixed(1))
     const min = Number(Math.min(...latencies).toFixed(1))
     const max = Number(Math.max(...latencies).toFixed(1))
     
@@ -32,15 +33,16 @@ export default function SlaSpeedometer({ transactions = [] }) {
     const p95 = Number(sorted[Math.min(p95Idx, sorted.length - 1)].toFixed(1))
 
     const compliantCount = latencies.filter(l => l <= 15.0).length
-    const slaCompliantPct = Number(((compliantCount / latencies.length) * 100).toFixed(1))
+    const slaCompliantPct = Number(((compliantCount / (latencies.length || 1)) * 100).toFixed(1))
 
     // Estimate TPS based on timestamp spread of recent 10 transactions
     let tps = 1.8
-    if (windowTxns.length >= 2) {
+    if (windowTxns.length >= 2 && windowTxns[0].timestamp) {
       const newest = new Date(windowTxns[0].timestamp).getTime()
-      const oldest = new Date(windowTxns[Math.min(windowTxns.length - 1, 9)].timestamp).getTime()
+      const oldestTxn = windowTxns[Math.min(windowTxns.length - 1, 9)]
+      const oldest = oldestTxn && oldestTxn.timestamp ? new Date(oldestTxn.timestamp).getTime() : newest
       const diffSec = (newest - oldest) / 1000
-      if (diffSec > 0.5 && diffSec < 60) {
+      if (!isNaN(diffSec) && diffSec > 0.5 && diffSec < 60) {
         tps = Number((Math.min(windowTxns.length, 10) / diffSec).toFixed(1))
       }
     }

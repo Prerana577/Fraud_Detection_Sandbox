@@ -261,7 +261,8 @@ export default function App() {
   }
 
   // ── Filter for Flagged tab ────────────────────────────────────────────────
-  const flaggedTxns = transactions.filter((t) => t.decision === 'FLAG')
+  const safeTransactions = Array.isArray(transactions) ? transactions : []
+  const flaggedTxns = safeTransactions.filter((t) => t && t.decision === 'FLAG')
 
   return (
     <div className="app-layout">
