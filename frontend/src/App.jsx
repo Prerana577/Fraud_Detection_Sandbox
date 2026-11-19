@@ -30,26 +30,66 @@ import PolicyBacktester  from './components/PolicyBacktester'
 const MAX_FEED_ROWS = 200  // keep the last 200 transactions in memory
 
 // ── Native Web Audio & Voice Synthesizer ─────────────────────────────────────
+let sharedAudioCtx = null
+
+function getAudioContext() {
+  if (typeof window === 'undefined') return null
+  if (!sharedAudioCtx) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext
+    if (AudioCtx) {
+      sharedAudioCtx = new AudioCtx()
+    }
+  }
+  if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
+    sharedAudioCtx.resume().catch(() => {})
+  }
+  return sharedAudioCtx
+}
+
 function playAlarmChime(isBlock = true) {
   try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext
-    if (!AudioCtx) return
-    const ctx = new AudioCtx()
-    if (ctx.state === 'suspended') ctx.resume()
+    const ctx = getAudioContext()
+    if (!ctx) return
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {})
+    }
 
+    const now = ctx.currentTime
     const osc = ctx.createOscillator()
     const gain = ctx.createGain()
-    osc.type = isBlock ? 'sawtooth' : 'sine'
-    osc.frequency.setValueAtTime(isBlock ? 880 : 587, ctx.currentTime)
-    osc.frequency.exponentialRampToValueAtTime(isBlock ? 440 : 880, ctx.currentTime + 0.3)
-    gain.gain.setValueAtTime(0.2, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
-    osc.connect(gain)
-    gain.connect(ctx.destination)
-    osc.start()
-    osc.stop(ctx.currentTime + 0.3)
+
+    if (isBlock) {
+      // Authentic dual-tone alternating emergency siren
+      osc.type = 'sawtooth'
+      osc.frequency.setValueAtTime(960, now)
+      osc.frequency.setValueAtTime(770, now + 0.15)
+      osc.frequency.setValueAtTime(960, now + 0.30)
+      osc.frequency.setValueAtTime(770, now + 0.45)
+
+      gain.gain.setValueAtTime(0.35, now)
+      gain.gain.linearRampToValueAtTime(0.35, now + 0.5)
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(now)
+      osc.stop(now + 0.65)
+    } else {
+      // Crisp warning chime for FLAG
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(587.33, now)
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.25)
+
+      gain.gain.setValueAtTime(0.2, now)
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(now)
+      osc.stop(now + 0.3)
+    }
   } catch (e) {
-    console.debug('Audio unavailable', e)
+    console.warn('[Audio] Siren playback error:', e)
   }
 }
 
@@ -57,13 +97,16 @@ function announceVoice(text) {
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel()
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume()
+      }
       const utterance = new SpeechSynthesisUtterance(text)
       utterance.rate = 1.05
       utterance.pitch = 1.0
-      utterance.volume = 0.9
+      utterance.volume = 1.0
       window.speechSynthesis.speak(utterance)
     } catch (e) {
-      console.debug('Voice unavailable', e)
+      console.warn('[Voice] Speech error:', e)
     }
   }
 }
@@ -99,8 +142,15 @@ export default function App() {
     catch  {}
   }, [])
 
-  // ── Initial load ──────────────────────────────────────────────────────────
+  // ── Initial load & Browser Audio Unlock ────────────────────────────────────
   useEffect(() => {
+    // Browser autoplay policy requires a user gesture to unpause AudioContext
+    const unlockAudio = () => {
+      getAudioContext()
+    }
+    window.addEventListener('click', unlockAudio, { once: true })
+    window.addEventListener('keydown', unlockAudio, { once: true })
+
     async function boot() {
       try {
         const [txns, s, al, sim] = await Promise.all([
@@ -118,6 +168,11 @@ export default function App() {
       }
     }
     boot()
+
+    return () => {
+      window.removeEventListener('click', unlockAudio)
+      window.removeEventListener('keydown', unlockAudio)
+    }
   }, [])
 
   // ── Stats polling fallback (every 10 s) ──────────────────────────────────
@@ -222,8 +277,15 @@ export default function App() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
           <button
-            className={`btn ${voiceEnabled ? 'btn-ghost' : 'btn-ghost'}`}
-            onClick={() => setVoiceEnabled((v) => !v)}
+            className="btn btn-ghost"
+            onClick={() => {
+              const next = !voiceEnabled
+              setVoiceEnabled(next)
+              if (next) {
+                playAlarmChime(true)
+                announceVoice('Siren and voice alerts enabled.')
+              }
+            }}
             id="voice-toggle-btn"
             aria-label="Toggle sound and voice announcer"
             title={voiceEnabled ? 'Mute audio siren & voice announcer' : 'Enable real-time audio siren & voice announcer'}
@@ -237,6 +299,28 @@ export default function App() {
             }}
           >
             {voiceEnabled ? '🔊 Siren: ON' : '🔇 Siren: OFF'}
+          </button>
+
+          <button
+            className="btn btn-ghost"
+            onClick={() => {
+              playAlarmChime(true)
+              announceVoice('Security Alert: Test fraud detection triggered.')
+            }}
+            id="test-siren-btn"
+            aria-label="Test siren and voice"
+            title="Click to test the siren audio and speech synthesis right now"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.8rem',
+              color: '#fbbf24',
+              border: '1px solid rgba(251, 191, 36, 0.3)',
+              background: 'rgba(251, 191, 36, 0.08)',
+            }}
+          >
+            🔔 Test Siren
           </button>
 
           <button
