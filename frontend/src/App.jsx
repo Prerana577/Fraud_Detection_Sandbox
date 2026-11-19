@@ -24,8 +24,49 @@ import SettingsDrawer    from './components/SettingsDrawer'
 import MlComparison      from './components/MlComparison'
 import GeoMap            from './components/GeoMap'
 import RingVisualizer    from './components/RingVisualizer'
+import SlaSpeedometer    from './components/SlaSpeedometer'
+import PolicyBacktester  from './components/PolicyBacktester'
 
 const MAX_FEED_ROWS = 200  // keep the last 200 transactions in memory
+
+// ── Native Web Audio & Voice Synthesizer ─────────────────────────────────────
+function playAlarmChime(isBlock = true) {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext
+    if (!AudioCtx) return
+    const ctx = new AudioCtx()
+    if (ctx.state === 'suspended') ctx.resume()
+
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = isBlock ? 'sawtooth' : 'sine'
+    osc.frequency.setValueAtTime(isBlock ? 880 : 587, ctx.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(isBlock ? 440 : 880, ctx.currentTime + 0.3)
+    gain.gain.setValueAtTime(0.2, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.start()
+    osc.stop(ctx.currentTime + 0.3)
+  } catch (e) {
+    console.debug('Audio unavailable', e)
+  }
+}
+
+function announceVoice(text) {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel()
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.rate = 1.05
+      utterance.pitch = 1.0
+      utterance.volume = 0.9
+      window.speechSynthesis.speak(utterance)
+    } catch (e) {
+      console.debug('Voice unavailable', e)
+    }
+  }
+}
 
 export default function App() {
   const [activeTab,     setActiveTab]     = useState('dashboard')
@@ -36,9 +77,11 @@ export default function App() {
   const [simStatus,     setSimStatus]     = useState({ running: false })
   const [selectedTxn,   setSelectedTxn]   = useState(null)
   const [showSettings,  setShowSettings]  = useState(false)
+  const [voiceEnabled,  setVoiceEnabled]  = useState(true)
   const [error,         setError]         = useState(null)
 
   const toastIdRef = useRef(0)
+  const lastAnnounceRef = useRef(0)
 
   // ── Refresh helpers ───────────────────────────────────────────────────────
   const refreshStats = useCallback(async () => {
@@ -89,10 +132,30 @@ export default function App() {
       setTransactions((prev) => [txn, ...prev].slice(0, MAX_FEED_ROWS))
       // Refresh stats on every new txn (lightweight — no round-trip if WS stats_update fires)
       refreshStats()
+
+      // Real-time audio siren & voice announcement
+      if (voiceEnabled) {
+        if (txn.decision === 'BLOCK') {
+          playAlarmChime(true)
+          const now = Date.now()
+          if (now - lastAnnounceRef.current > 3500) {
+            lastAnnounceRef.current = now
+            const name = txn.user_name || 'Cardholder'
+            const city = txn.city || 'India'
+            const amt = Math.round(txn.amount || 0)
+            announceVoice(`Security Alert: Fraud blocked for ${name} in ${city}. Amount: ${amt} Rupees.`)
+          }
+        } else if (txn.decision === 'FLAG') {
+          playAlarmChime(false)
+        }
+      }
     }
 
     function onNewAlert(alert) {
       setAlerts((prev) => [alert, ...prev])
+      if (voiceEnabled) {
+        playAlarmChime(true)
+      }
       // Show a toast
       const id = ++toastIdRef.current
       setToasts((prev) => [...prev, { ...alert, id }])
@@ -111,7 +174,7 @@ export default function App() {
       socket.off('new_alert',       onNewAlert)
       socket.off('stats_update',    onStatsUpdate)
     }
-  }, [refreshStats])
+  }, [refreshStats, voiceEnabled])
 
   // ── Dismiss toast ─────────────────────────────────────────────────────────
   function dismissToast(id) {
@@ -137,7 +200,7 @@ export default function App() {
         <h1>Fraud Detection Sandbox</h1>
 
         <nav className="tab-bar" role="navigation" aria-label="Main navigation">
-          {['dashboard', 'map', 'rings', 'flagged', 'admin', 'ml', 'simulator'].map((tab) => (
+          {['dashboard', 'map', 'rings', 'backtest', 'flagged', 'admin', 'ml', 'simulator'].map((tab) => (
             <button
               key={tab}
               className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
@@ -148,6 +211,7 @@ export default function App() {
               {tab === 'dashboard' ? '📊 Dashboard' :
                tab === 'map'       ? '🗺️ Geo Map' :
                tab === 'rings'     ? '🕸️ Mule Rings' :
+               tab === 'backtest'  ? '🧪 Backtester' :
                tab === 'flagged'   ? `🚩 Flagged (${flaggedTxns.length})` :
                tab === 'admin'     ? '👤 Admin' :
                tab === 'ml'        ? '🤖 ML Benchmark' :
@@ -156,15 +220,34 @@ export default function App() {
           ))}
         </nav>
 
-        <button
-          className="btn btn-ghost"
-          onClick={() => setShowSettings((v) => !v)}
-          id="settings-toggle-btn"
-          aria-label="Toggle rule settings"
-          style={{ marginLeft: 12 }}
-        >
-          ⚙ Settings
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+          <button
+            className={`btn ${voiceEnabled ? 'btn-ghost' : 'btn-ghost'}`}
+            onClick={() => setVoiceEnabled((v) => !v)}
+            id="voice-toggle-btn"
+            aria-label="Toggle sound and voice announcer"
+            title={voiceEnabled ? 'Mute audio siren & voice announcer' : 'Enable real-time audio siren & voice announcer'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              color: voiceEnabled ? '#38bdf8' : 'var(--color-text-muted)',
+              border: voiceEnabled ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
+              background: voiceEnabled ? 'rgba(56, 189, 248, 0.1)' : 'transparent',
+            }}
+          >
+            {voiceEnabled ? '🔊 Siren: ON' : '🔇 Siren: OFF'}
+          </button>
+
+          <button
+            className="btn btn-ghost"
+            onClick={() => setShowSettings((v) => !v)}
+            id="settings-toggle-btn"
+            aria-label="Toggle rule settings"
+          >
+            ⚙ Settings
+          </button>
+        </div>
       </header>
 
       {/* ── Error banner ────────────────────────────────────────────────── */}
@@ -204,6 +287,7 @@ export default function App() {
               onError={setError}
             />
             <KpiCards stats={stats} />
+            <SlaSpeedometer transactions={transactions} />
             <div className="charts-row">
               <DecisionDonut stats={stats} />
               <RuleBars stats={stats} />
@@ -230,6 +314,11 @@ export default function App() {
         {/* ═══════════ RINGS TAB ═══════════ */}
         {activeTab === 'rings' && (
           <RingVisualizer />
+        )}
+
+        {/* ═══════════ BACKTESTER TAB ═══════════ */}
+        {activeTab === 'backtest' && (
+          <PolicyBacktester />
         )}
 
         {/* ═══════════ FLAGGED TAB ═══════════ */}

@@ -84,6 +84,51 @@ export default function BlockedDetail({ txn, onClose, onActionComplete }) {
         </div>
       </div>
 
+      {/* Device & Network Intelligence Card */}
+      {txn.device_info && (
+        <div style={{
+          background: 'rgba(30, 41, 59, 0.5)',
+          borderRadius: 8,
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: 12,
+          marginBottom: 16
+        }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <span>🛡️ DEVICE & NETWORK INTELLIGENCE</span>
+            <span style={{
+              fontSize: '0.7rem',
+              padding: '2px 6px',
+              borderRadius: 4,
+              fontWeight: 600,
+              background: txn.device_info.vpn_detected ? 'rgba(239, 68, 68, 0.2)' : 'rgba(34, 197, 94, 0.15)',
+              color: txn.device_info.vpn_detected ? '#f87171' : '#4ade80'
+            }}>
+              {txn.device_info.vpn_detected ? '⚠️ VPN / PROXY DETECTED' : '✓ RESIDENTIAL IP'}
+            </span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: '0.8rem' }}>
+            <div>
+              <span style={{ color: 'var(--color-text-muted)' }}>Device & OS:</span><br />
+              <strong style={{ color: '#f1f5f9' }}>{txn.device_info.device_type}</strong>
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{txn.device_info.os} · {txn.device_info.browser}</div>
+            </div>
+            <div>
+              <span style={{ color: 'var(--color-text-muted)' }}>IP & Network:</span><br />
+              <strong style={{ color: '#f1f5f9' }}>{txn.device_info.ip_address}</strong>
+              <div style={{ fontSize: '0.72rem', color: txn.device_info.vpn_detected ? '#f87171' : '#64748b' }}>
+                {txn.device_info.ip_type}
+              </div>
+            </div>
+          </div>
+          <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Device Trust Score:</span>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: txn.device_info.device_trust >= 70 ? '#4ade80' : txn.device_info.device_trust >= 40 ? '#fbbf24' : '#f87171' }}>
+              {txn.device_info.device_trust} / 100
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Action feedback */}
       {actionMsg && (
         <div style={{

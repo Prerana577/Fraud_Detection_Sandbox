@@ -48,6 +48,7 @@ const LiveFeed = memo(function LiveFeed({ transactions, onSelectTxn }) {
               <th>User</th>
               <th>Amount</th>
               <th>City</th>
+              <th>Device / IP</th>
               <th>Risk</th>
               <th>Decision</th>
             </tr>
@@ -55,7 +56,7 @@ const LiveFeed = memo(function LiveFeed({ transactions, onSelectTxn }) {
           <tbody>
             {transactions.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>
+                <td colSpan={8} style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-light)' }}>
                   No transactions yet. Start the simulator →
                 </td>
               </tr>
@@ -83,6 +84,21 @@ const LiveFeed = memo(function LiveFeed({ transactions, onSelectTxn }) {
                     <td className="truncate" style={{ maxWidth: 120 }}>{txn.user_name}</td>
                     <td style={{ fontWeight: 600 }}>{fmt(txn.amount)}</td>
                     <td>{txn.city}</td>
+                    <td>
+                      {txn.device_info ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+                          <span>{txn.device_info.device_type?.includes('Mobile') ? '📱' : txn.device_info.device_type?.includes('Tor') ? '🧅' : '💻'}</span>
+                          <span style={{
+                            color: txn.device_info.vpn_detected ? '#f87171' : 'var(--color-text-muted)',
+                            fontWeight: txn.device_info.vpn_detected ? 700 : 400
+                          }}>
+                            {txn.device_info.vpn_detected ? '🛡️ VPN' : (txn.device_info.device_type?.split(' ')[0] || 'Mobile')}
+                          </span>
+                        </div>
+                      ) : (
+                        <span style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>—</span>
+                      )}
+                    </td>
                     <td style={{ minWidth: 120 }}>
                       <RiskBar score={txn.risk_score} decision={txn.decision} />
                     </td>

@@ -106,3 +106,7 @@ export const uploadCsv = async (file, stream = true) => {
   return json
 }
 
+// ── What-If Policy Backtester ────────────────────────────────────────────────
+export const runBacktest = (policyData = {}) =>
+  _fetch('/backtest', { method: 'POST', body: JSON.stringify(policyData) })
+
