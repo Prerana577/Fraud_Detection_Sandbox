@@ -71,43 +71,82 @@ def replay_start():
     app = current_app._get_current_object()
 
     def _run():
+        import time
         with app.app_context():
             from routes.transactions import process_transaction
-
-            first_user = User.query.first()
-            user_id = first_user.user_id if first_user else "user_default"
+            socketio = current_app.extensions.get("socketio")
 
             for row in rows:
                 if not _replay_state["running"]:
                     break
 
+                clean_row = {k.strip().lower(): v.strip() for k, v in row.items() if k}
+
                 # Flexible amount mapping
-                amount_raw = (
-                    row.get("amount_inr") or row.get("amount") or
-                    row.get("amt") or row.get("amt_inr") or
-                    row.get("trans_amount") or row.get("price") or row.get("val")
+                amount_val = (
+                    clean_row.get("amount_inr") or
+                    clean_row.get("amount") or
+                    clean_row.get("amt") or
+                    clean_row.get("amt_inr") or
+                    clean_row.get("trans_amount") or
+                    clean_row.get("price") or
+                    clean_row.get("val")
                 )
+                if not amount_val:
+                    for k, v in clean_row.items():
+                        if "amount" in k or k == "amt":
+                            amount_val = v
+                            break
                 try:
-                    amount = float(amount_raw) if amount_raw else 1000.0
+                    amount = float(amount_val or 1000.0)
                 except (ValueError, TypeError):
                     amount = 1000.0
 
+                user_id = (
+                    clean_row.get("user_id") or
+                    clean_row.get("customer_id") or
+                    clean_row.get("card_id") or
+                    clean_row.get("nameorig") or
+                    "user_01"
+                )
+                merchant = clean_row.get("merchant") or clean_row.get("store") or clean_row.get("category") or "Store"
+                city = clean_row.get("city") or clean_row.get("location") or clean_row.get("home_city") or "Bengaluru"
+                home_city = clean_row.get("home_city") or city
+                txn_status = clean_row.get("txn_status") or clean_row.get("status") or "success"
+
+                lat_val = clean_row.get("lat") or clean_row.get("merch_lat") or clean_row.get("latitude")
+                lon_val = clean_row.get("lon") or clean_row.get("merch_long") or clean_row.get("longitude")
+                lat = float(lat_val) if (lat_val and str(lat_val).strip() != "") else None
+                lon = float(lon_val) if (lon_val and str(lon_val).strip() != "") else None
+
                 payload = {
-                    "user_id": user_id,
+                    "user_id": str(user_id),
                     "amount": amount,
-                    "merchant": "CSV Import",
-                    "city": "Mumbai",
-                    "lat": 19.076,
-                    "lon": 72.877,
-                    "txn_status": "success",
+                    "merchant": str(merchant),
+                    "city": str(city),
+                    "home_city": str(home_city),
+                    "lat": lat,
+                    "lon": lon,
+                    "txn_status": str(txn_status),
                 }
+                avg_amt_key = clean_row.get("user_avg_amount_inr") or clean_row.get("user_avg_amount") or clean_row.get("avg_amount")
+                if avg_amt_key:
+                    try:
+                        payload["user_avg_amount_inr"] = float(avg_amt_key)
+                    except (ValueError, TypeError):
+                        pass
+
+                ts_key = clean_row.get("timestamp") or clean_row.get("time") or clean_row.get("date")
+                if ts_key:
+                    payload["timestamp"] = ts_key
 
                 try:
-                    process_transaction(payload)
+                    process_transaction(payload, socketio=socketio)
                 except Exception as exc:
                     logger.warning("[replay] Row error: %s", exc)
 
                 _replay_state["processed"] += 1
+                time.sleep(0.05)  # slight delay for smooth stream into UI
 
             _replay_state["running"] = False
             logger.info("[replay] Finished: %d/%d rows processed.", _replay_state["processed"], total)

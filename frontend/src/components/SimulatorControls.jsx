@@ -1,8 +1,8 @@
 /**
  * SimulatorControls.jsx — Control bar for the transaction simulator and custom dataset uploader.
  */
-import { useRef, useState } from 'react'
-import { startSimulator, stopSimulator, setSimSpeed, injectPattern, uploadCsv } from '../api'
+import { useRef, useState, useEffect } from 'react'
+import { startSimulator, stopSimulator, setSimSpeed, injectPattern, uploadCsv, startReplay, stopReplay, getReplayStatus } from '../api'
 
 export default function SimulatorControls({ simStatus, onStatusChange, onError }) {
   const running = simStatus?.running ?? false
@@ -10,10 +10,27 @@ export default function SimulatorControls({ simStatus, onStatusChange, onError }
   const maxDelay = simStatus?.max_delay ?? 2.0
   const [uploading, setUploading] = useState(false)
   const [uploadMsg, setUploadMsg] = useState(null)
+  const [selectedCsv, setSelectedCsv] = useState('user_dataset.csv')
+  const [replaying, setReplaying] = useState(false)
+  const [replayInfo, setReplayInfo] = useState(null)
   const fileInputRef = useRef(null)
 
   // Speed is represented as txns/sec for user-friendliness
   const speed = maxDelay > 0 ? (1 / ((minDelay + maxDelay) / 2)).toFixed(1) : 1
+
+  async function handleStartReplay() {
+    try {
+      setReplaying(true)
+      setUploadMsg(`▶ Starting replay of ${selectedCsv}…`)
+      const res = await startReplay(selectedCsv)
+      setUploadMsg(`✓ Replaying ${res.total} rows from ${selectedCsv} into live feed`)
+      setTimeout(() => setUploadMsg(null), 5000)
+    } catch (err) {
+      onError(`Replay failed: ${err.message}`)
+    } finally {
+      setReplaying(false)
+    }
+  }
 
   async function handleStart() {
     try { onStatusChange(await startSimulator()) }
@@ -136,16 +153,42 @@ export default function SimulatorControls({ simStatus, onStatusChange, onError }
           style={{ display: 'none' }}
           id="csv-file-input"
         />
-        <button
-          className="btn btn-secondary"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          id="upload-csv-btn"
-          title="Upload and evaluate custom CSV dataset"
-          style={{ marginLeft: 'auto' }}
-        >
-          {uploading ? '⏳ Evaluating…' : '📁 Upload Dataset (CSV)'}
-        </button>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
+          <select
+            value={selectedCsv}
+            onChange={(e) => setSelectedCsv(e.target.value)}
+            style={{
+              padding: '6px 10px',
+              borderRadius: 'var(--radius)',
+              background: 'var(--color-bg)',
+              color: 'var(--color-text)',
+              border: '1px solid var(--color-border)',
+              fontSize: '0.8rem',
+            }}
+          >
+            <option value="user_dataset.csv">user_dataset.csv (136 txns)</option>
+            <option value="sample_dataset.csv">sample_dataset.csv (20 txns)</option>
+          </select>
+          <button
+            className="btn btn-primary"
+            onClick={handleStartReplay}
+            disabled={replaying}
+            title="Stream and replay this dataset in real-time"
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            {replaying ? '⏳ Replaying…' : '▶ Replay CSV'}
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            id="upload-csv-btn"
+            title="Upload and evaluate custom CSV dataset"
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            {uploading ? '⏳ Evaluating…' : '📁 Upload CSV'}
+          </button>
+        </div>
       </div>
 
       {uploadMsg && (
