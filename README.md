@@ -6,6 +6,13 @@ An end-to-end, real-time financial transaction scoring and fraud detection sandb
 
 ## 🌟 Highlights & Architecture
 
+- **🔊 Real-Time Voice & Siren Engine**: Web Audio dual-tone emergency siren & SpeechSynthesis voice announcer on flagged and blocked transactions.
+- **⚡ Gateway SLA Speedometer Widget**: Sub-millisecond latency telemetry with RBI/PCI-DSS <15ms SLA compliance monitoring.
+- **🛡️ Device & Network Intelligence**: Device fingerprinting, VPN/Tor proxy risk analysis, and device trust scores.
+- **🧪 "What-If" Policy Backtester**: Simulate the impact of threshold modifications on historical datasets before promoting to production.
+- **🗺️ Interactive GeoMap & Mule Rings**: Google Maps layers with animated impossible-travel flight arcs and collusion cluster graph visualization.
+- **📄 Regulatory Audit PDF Generator**: One-click PCI-DSS and RBI compliance audit export with digital sign-off blocks.
+
 ```
                     ┌────────────────────────┐
                     │  Transaction Simulator │
