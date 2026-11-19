@@ -4,7 +4,8 @@
  */
 import { useState, useEffect, useCallback } from 'react'
 import socket from '../socket'
-import { getUsers, freezeUser, unfreezeUser, getTransactions, overrideTransaction } from '../api'
+import { getUsers, freezeUser, unfreezeUser, getTransactions, overrideTransaction, exportTxnsCsv, exportFlaggedCsv, getStats } from '../api'
+import { generateAuditReportPdf } from '../utils/reportGenerator'
 
 const fmt = (n) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n)
@@ -82,8 +83,44 @@ export default function AdminPanel({ initialView = 'users' }) {
     }
   }
 
+  const handleGeneratePdf = async () => {
+    try {
+      const stats = await getStats()
+      const allTxns = await getTransactions({ limit: 100 })
+      generateAuditReportPdf(stats, allTxns)
+    } catch (e) {
+      alert(`Report error: ${e.message}`)
+    }
+  }
+
   return (
     <div>
+      {/* Regulatory Export Bar */}
+      <div style={{
+        display: 'flex',
+        gap: 8,
+        alignItems: 'center',
+        background: 'var(--color-card)',
+        padding: '12px 16px',
+        borderRadius: 10,
+        marginBottom: 16,
+        border: '1px solid var(--color-border)',
+        flexWrap: 'wrap',
+      }}>
+        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94a3b8', marginRight: 'auto' }}>
+          📑 REGULATORY AUDIT & COMPLIANCE TOOLS:
+        </span>
+        <button className="btn btn-primary" onClick={handleGeneratePdf} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          📄 Generate Audit Report (PDF)
+        </button>
+        <button className="btn btn-secondary" onClick={exportTxnsCsv}>
+          ⬇ Export All (CSV)
+        </button>
+        <button className="btn btn-secondary" onClick={exportFlaggedCsv}>
+          ⬇ Export Flagged (CSV)
+        </button>
+      </div>
+
       {/* Sub-tab toggle */}
       <div className="admin-search" style={{ marginBottom: 0, display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', gap: 8 }}>

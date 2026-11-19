@@ -22,6 +22,8 @@ import AdminPanel        from './components/AdminPanel'
 import SimulatorControls from './components/SimulatorControls'
 import SettingsDrawer    from './components/SettingsDrawer'
 import MlComparison      from './components/MlComparison'
+import GeoMap            from './components/GeoMap'
+import RingVisualizer    from './components/RingVisualizer'
 
 const MAX_FEED_ROWS = 200  // keep the last 200 transactions in memory
 
@@ -135,7 +137,7 @@ export default function App() {
         <h1>Fraud Detection Sandbox</h1>
 
         <nav className="tab-bar" role="navigation" aria-label="Main navigation">
-          {['dashboard', 'flagged', 'admin', 'ml', 'simulator'].map((tab) => (
+          {['dashboard', 'map', 'rings', 'flagged', 'admin', 'ml', 'simulator'].map((tab) => (
             <button
               key={tab}
               className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
@@ -144,6 +146,8 @@ export default function App() {
               aria-current={activeTab === tab ? 'page' : undefined}
             >
               {tab === 'dashboard' ? '📊 Dashboard' :
+               tab === 'map'       ? '🗺️ Geo Map' :
+               tab === 'rings'     ? '🕸️ Mule Rings' :
                tab === 'flagged'   ? `🚩 Flagged (${flaggedTxns.length})` :
                tab === 'admin'     ? '👤 Admin' :
                tab === 'ml'        ? '🤖 ML Benchmark' :
@@ -209,6 +213,23 @@ export default function App() {
               <Alerts alerts={alerts} onDismiss={handleDismissAlert} />
             </div>
           </>
+        )}
+
+        {/* ═══════════ GEO MAP TAB ═══════════ */}
+        {activeTab === 'map' && (
+          <>
+            <SimulatorControls
+              simStatus={simStatus}
+              onStatusChange={(s) => setSimStatus((prev) => ({ ...prev, ...s }))}
+              onError={setError}
+            />
+            <GeoMap transactions={transactions} />
+          </>
+        )}
+
+        {/* ═══════════ RINGS TAB ═══════════ */}
+        {activeTab === 'rings' && (
+          <RingVisualizer />
         )}
 
         {/* ═══════════ FLAGGED TAB ═══════════ */}

@@ -1,0 +1,165 @@
+import { jsPDF } from 'jspdf'
+
+export function generateAuditReportPdf(stats, transactions) {
+  const doc = new jsPDF()
+  const pageWidth = doc.internal.pageSize.getWidth()
+
+  // ── Header Banner ─────────────────────────────────────────────────────────
+  doc.setFillColor(15, 23, 42) // Dark Navy
+  doc.rect(0, 0, pageWidth, 32, 'F')
+
+  doc.setTextColor(255, 255, 255)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(16)
+  doc.text('FINANCIAL FRAUD DETECTION SANDBOX', 14, 14)
+
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(148, 163, 184)
+  doc.text('REGULATORY TRANSACTION AUDIT & AML INCIDENT REPORT', 14, 22)
+  doc.text(`Generated: ${new Date().toLocaleString()} | Standard: PCI-DSS v4.0 & RBI Guidelines`, 14, 27)
+
+  // ── Executive Summary Box ────────────────────────────────────────────────
+  let y = 42
+  doc.setFontSize(12)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(30, 41, 59)
+  doc.text('1. EXECUTIVE AUDIT SUMMARY', 14, y)
+
+  y += 6
+  doc.setDrawColor(203, 213, 225)
+  doc.setFillColor(248, 250, 252)
+  doc.roundedRect(14, y, pageWidth - 28, 38, 3, 3, 'FD')
+
+  const total = stats?.total || transactions?.length || 0
+  const approved = stats?.approved || 0
+  const flagged = stats?.flagged || 0
+  const blocked = stats?.blocked || 0
+  const fraudRate = stats?.fraud_rate || 0
+
+  doc.setFontSize(9)
+  doc.setTextColor(71, 85, 105)
+
+  // Column 1
+  doc.setFont('helvetica', 'bold')
+  doc.text('Total Volume Evaluated:', 20, y + 10)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`${total} Transactions`, 68, y + 10)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Legitimate Cleared:', 20, y + 18)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(22, 163, 74)
+  doc.text(`${approved} (${total ? ((approved / total) * 100).toFixed(1) : 0}%)`, 68, y + 18)
+
+  // Column 2
+  doc.setTextColor(71, 85, 105)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Flagged for 3DS Step-Up:', 110, y + 10)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(217, 119, 6)
+  doc.text(`${flagged} Cases`, 160, y + 10)
+
+  doc.setTextColor(71, 85, 105)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Hard Blocked (Fraud):', 110, y + 18)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(220, 38, 38)
+  doc.text(`${blocked} Cases`, 160, y + 18)
+
+  // Column Bottom
+  doc.setTextColor(71, 85, 105)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Overall Anomaly Rate:', 20, y + 28)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`${fraudRate}%`, 68, y + 28)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Active Frozen Accounts:', 110, y + 28)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`${stats?.frozen_accounts || 0} Cardholders`, 160, y + 28)
+
+  // ── High-Risk Incident Log Table ─────────────────────────────────────────
+  y += 50
+  doc.setFontSize(12)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(30, 41, 59)
+  doc.text('2. HIGH-RISK INCIDENT AUDIT TRAIL', 14, y)
+
+  y += 6
+  // Table Header
+  doc.setFillColor(30, 41, 59)
+  doc.rect(14, y, pageWidth - 28, 8, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  doc.text('TXN ID', 18, y + 5.5)
+  doc.text('CARDHOLDER', 48, y + 5.5)
+  doc.text('AMOUNT', 90, y + 5.5)
+  doc.text('MERCHANT', 115, y + 5.5)
+  doc.text('SCORE', 150, y + 5.5)
+  doc.text('DECISION', 168, y + 5.5)
+
+  y += 8
+  const flaggedOrBlocked = (transactions || []).filter(
+    (t) => t.decision === 'BLOCK' || t.decision === 'FLAG'
+  ).slice(0, 16)
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7.5)
+
+  flaggedOrBlocked.forEach((t, i) => {
+    if (y > 260) {
+      doc.addPage()
+      y = 20
+    }
+
+    doc.setFillColor(i % 2 === 0 ? 255 : 245, i % 2 === 0 ? 255 : 247, i % 2 === 0 ? 255 : 250)
+    doc.rect(14, y, pageWidth - 28, 7, 'F')
+
+    doc.setTextColor(51, 65, 85)
+    doc.text((t.txn_id || '').slice(0, 10), 18, y + 5)
+    doc.text((t.user_name || t.user_id || '').slice(0, 18), 48, y + 5)
+    doc.text(`INR ${(t.amount || 0).toLocaleString()}`, 90, y + 5)
+    doc.text((t.merchant || '').slice(0, 16), 115, y + 5)
+    doc.text(`${t.risk_score || 0}/100`, 150, y + 5)
+
+    if (t.decision === 'BLOCK') {
+      doc.setTextColor(220, 38, 38)
+      doc.setFont('helvetica', 'bold')
+      doc.text('BLOCK', 168, y + 5)
+    } else {
+      doc.setTextColor(217, 119, 6)
+      doc.setFont('helvetica', 'bold')
+      doc.text('FLAG', 168, y + 5)
+    }
+    doc.setFont('helvetica', 'normal')
+
+    y += 7
+  })
+
+  // ── Sign-off Block ───────────────────────────────────────────────────────
+  if (y > 230) {
+    doc.addPage()
+    y = 30
+  } else {
+    y += 20
+  }
+
+  doc.setDrawColor(203, 213, 225)
+  doc.line(14, y, pageWidth - 28, y)
+  y += 12
+
+  doc.setFontSize(8)
+  doc.setTextColor(100, 116, 139)
+  doc.text('Investigator / Risk Officer Sign-off: _______________________', 18, y)
+  doc.text('Compliance Auditor Signature: _______________________', 115, y)
+
+  y += 8
+  doc.setFontSize(7)
+  doc.text('Confidential Document — Generated by Antigravity Financial Fraud Sandbox for Internal Security Compliance.', 18, y)
+
+  // Save the PDF
+  const filename = `Fraud_Audit_Report_${new Date().toISOString().slice(0, 10)}.pdf`
+  doc.save(filename)
+}

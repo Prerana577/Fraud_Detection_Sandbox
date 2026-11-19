@@ -9,3 +9,4 @@ venv/
 *.sqlite
 fraud.db
 .DS_Store
+

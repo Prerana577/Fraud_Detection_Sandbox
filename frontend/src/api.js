@@ -83,6 +83,7 @@ export const sendTestNotify  = (type, user_id) => fetch(`${BASE}/notify/test`, {
 export const getReplayStatus = ()         => fetch(`${BASE}/replay/status`).then(r => r.json())
 export const startReplay     = (file)     => fetch(`${BASE}/replay/start`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({file})}).then(r => r.json())
 export const stopReplay      = ()         => fetch(`${BASE}/replay/stop`, {method:'POST'}).then(r => r.json())
+export const getRings        = ()         => fetch(`${BASE}/rings`).then(r => r.json())
 
 // ── Export ───────────────────────────────────────────────────────────────────
 export const exportTxnsCsv   = ()         => { window.open(`${BASE}/export/transactions.csv`, '_blank') }
