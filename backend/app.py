@@ -81,6 +81,13 @@ def create_app(config_class=Config) -> Flask:
     # ── Database + seed ───────────────────────────────────────────────────────
     with app.app_context():
         db.create_all()
+        if "sqlite" in app.config.get("SQLALCHEMY_DATABASE_URI", ""):
+            try:
+                db.session.execute(db.text("PRAGMA journal_mode=WAL;"))
+                db.session.execute(db.text("PRAGMA synchronous=NORMAL;"))
+                db.session.commit()
+            except Exception as exc:
+                logger.debug("[db] WAL mode setup note: %s", exc)
         _auto_seed(app)
 
     # ── Simulator wiring ──────────────────────────────────────────────────────
