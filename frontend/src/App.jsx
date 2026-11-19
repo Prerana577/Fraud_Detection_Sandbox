@@ -126,6 +126,16 @@ export default function App() {
   const toastIdRef = useRef(0)
   const lastAnnounceRef = useRef(0)
 
+  // Expose sound and voice announcements globally for CSV uploads & alerts
+  useEffect(() => {
+    window.__fraudAnnounce = (text) => {
+      if (voiceEnabled) announceVoice(text)
+    }
+    window.__fraudChime = (isBlock = true) => {
+      if (voiceEnabled) playAlarmChime(isBlock)
+    }
+  }, [voiceEnabled])
+
   // ── Refresh helpers ───────────────────────────────────────────────────────
   const refreshStats = useCallback(async () => {
     try   { setStats(await getStats()) }
@@ -190,18 +200,24 @@ export default function App() {
 
       // Real-time audio siren & voice announcement
       if (voiceEnabled) {
+        const name = txn.user_name || 'Cardholder'
+        const city = txn.city || 'India'
+        const amt = Math.round(txn.amount || 0)
+
         if (txn.decision === 'BLOCK') {
           playAlarmChime(true)
           const now = Date.now()
-          if (now - lastAnnounceRef.current > 3500) {
+          if (now - lastAnnounceRef.current > 3000) {
             lastAnnounceRef.current = now
-            const name = txn.user_name || 'Cardholder'
-            const city = txn.city || 'India'
-            const amt = Math.round(txn.amount || 0)
             announceVoice(`Security Alert: Fraud blocked for ${name} in ${city}. Amount: ${amt} Rupees.`)
           }
         } else if (txn.decision === 'FLAG') {
           playAlarmChime(false)
+          const now = Date.now()
+          if (now - lastAnnounceRef.current > 3000) {
+            lastAnnounceRef.current = now
+            announceVoice(`Warning: Transaction flagged for review for ${name} in ${city}. Amount: ${amt} Rupees.`)
+          }
         }
       }
     }

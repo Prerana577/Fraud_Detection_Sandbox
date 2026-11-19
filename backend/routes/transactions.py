@@ -366,6 +366,10 @@ def upload_csv():
             counts[res["decision"]] = counts.get(res["decision"], 0) + 1
             processed.append(res)
 
+            # Smooth streaming throttle so frontend receives animated events with audio
+            if stream and socketio and row_num <= 40:
+                time.sleep(0.05)
+
             # Check for Kaggle / custom ground truth
             is_actual_fraud = None
             if clean_row.get("is_fraud") is not None or clean_row.get("isfraud") is not None or clean_row.get("class") is not None:

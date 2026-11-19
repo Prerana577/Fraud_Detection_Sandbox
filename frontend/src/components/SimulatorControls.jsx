@@ -62,9 +62,25 @@ export default function SimulatorControls({ simStatus, onStatusChange, onError }
       setUploadMsg(`Evaluating dataset ${file.name}…`)
       const res = await uploadCsv(file, true)
       const count = res.total_rows_evaluated ?? res.total_processed ?? 0
+      const flagged = res.counts?.FLAG || 0
+      const blocked = res.counts?.BLOCK || 0
       const kaggleInfo = res.kaggle_evaluation ? ` • Accuracy: ${res.kaggle_evaluation.accuracy_pct}% • Frauds Caught: ${res.kaggle_evaluation.detected_frauds}/${res.kaggle_evaluation.actual_frauds_in_sample}` : ''
-      setUploadMsg(`✓ Evaluated ${count} transactions (${res.counts?.FLAG || 0} flagged, ${res.counts?.BLOCK || 0} blocked)${kaggleInfo}`)
-      setTimeout(() => setUploadMsg(null), 5000)
+      setUploadMsg(`✓ Evaluated ${count} transactions (${flagged} flagged, ${blocked} blocked)${kaggleInfo}`)
+      
+      // Voice & audio announcement of evaluation results
+      if (window.__fraudAnnounce) {
+        if (blocked > 0) {
+          window.__fraudChime?.(true)
+          window.__fraudAnnounce(`Dataset evaluated: ${count} transactions processed. ${flagged} flagged for review, and ${blocked} blocked.`)
+        } else if (flagged > 0) {
+          window.__fraudChime?.(false)
+          window.__fraudAnnounce(`Dataset evaluated: ${count} transactions processed. ${flagged} transactions flagged for review.`)
+        } else {
+          window.__fraudAnnounce(`Dataset evaluated: ${count} transactions processed. All transactions approved.`)
+        }
+      }
+
+      setTimeout(() => setUploadMsg(null), 6000)
     } catch (err) {
       onError(`Upload failed: ${err.message}`)
       setUploadMsg(null)
