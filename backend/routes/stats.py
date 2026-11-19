@@ -8,7 +8,7 @@ import logging
 from flask import Blueprint, jsonify
 from sqlalchemy import func
 
-from models import db, Transaction, User, Alert
+from models import db, Transaction, User, Alert, NetworkEdge
 
 logger = logging.getLogger(__name__)
 stats_bp = Blueprint("stats", __name__, url_prefix="/api")
@@ -127,3 +127,39 @@ def get_rings():
             "edges": edges
         }
     })
+
+
+
+@stats_bp.route("/reset", methods=["POST"])
+def reset_database():
+    """
+    Wipe all transactions, alerts, and network edges.
+    Unfreeze all users and reset avg_amount to 2000.
+    Keeps the user records so the sandbox is ready for a fresh CSV upload.
+    """
+    try:
+        # Order matters: alerts FK → transactions, network_edges standalone
+        Alert.query.delete()
+        Transaction.query.delete()
+        NetworkEdge.query.delete()
+
+        # Reset all users to clean baseline
+        users = User.query.all()
+        for u in users:
+            u.status = "active"
+            u.avg_amount = 2000.0
+
+        db.session.commit()
+
+        remaining_users = User.query.count()
+        logger.info("[reset] Database wiped. %d users retained and reset.", remaining_users)
+
+        return jsonify({
+            "status": "success",
+            "message": f"Database reset complete. {remaining_users} users retained (all active, avg_amount reset). 0 transactions, 0 alerts, 0 network edges.",
+            "users_retained": remaining_users,
+        })
+    except Exception as exc:
+        db.session.rollback()
+        logger.error("[reset] Failed: %s", exc, exc_info=True)
+        return jsonify({"status": "error", "error": str(exc)}), 500

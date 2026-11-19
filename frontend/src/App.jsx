@@ -10,7 +10,7 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react'
 import socket from './socket'
-import { getTransactions, getStats, getAlerts, getSimStatus, acknowledgeAlert } from './api'
+import { getTransactions, getStats, getAlerts, getSimStatus, acknowledgeAlert, resetDatabase } from './api'
 
 import KpiCards          from './components/KpiCards'
 import LiveFeed          from './components/LiveFeed'
@@ -237,6 +237,36 @@ export default function App() {
             }}
           >
             {voiceEnabled ? '🔊 Siren: ON' : '🔇 Siren: OFF'}
+          </button>
+
+          <button
+            className="btn btn-ghost"
+            onClick={async () => {
+              if (!window.confirm('🗑️ Reset all transactions, alerts & network edges?\n\nUsers will be retained. You can then upload a fresh CSV.')) return
+              try {
+                const res = await resetDatabase()
+                setTransactions([])
+                setAlerts([])
+                setToasts([])
+                setSelectedTxn(null)
+                setStats(null)
+                refreshStats()
+                setError(null)
+                alert(`✅ ${res.message || 'Database reset complete!'}`)
+              } catch (err) {
+                setError('Reset failed: ' + err.message)
+              }
+            }}
+            id="reset-btn"
+            aria-label="Reset database"
+            title="Clear all transactions, alerts & edges. Keeps users for fresh CSV upload."
+            style={{
+              color: '#f87171',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              background: 'rgba(239, 68, 68, 0.08)',
+            }}
+          >
+            🗑️ Reset
           </button>
 
           <button

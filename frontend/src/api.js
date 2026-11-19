@@ -110,3 +110,7 @@ export const uploadCsv = async (file, stream = true) => {
 export const runBacktest = (policyData = {}) =>
   _fetch('/backtest', { method: 'POST', body: JSON.stringify(policyData) })
 
+// ── Reset Database ──────────────────────────────────────────────────────────
+export const resetDatabase = () =>
+  _fetch('/reset', { method: 'POST' })
+
