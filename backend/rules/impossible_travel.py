@@ -35,13 +35,18 @@ def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
     Return the great-circle distance in kilometres between two points
     on Earth specified by decimal-degree latitude/longitude.
+    Includes fast-path for co-located transactions to minimize trigonometric CPU cycles.
     """
-    # Convert degrees → radians
-    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
+    # Fast path: identical or sub-meter coordinates
+    if abs(lat1 - lat2) < 1e-6 and abs(lon1 - lon2) < 1e-6:
+        return 0.0
 
-    a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+    # Convert degrees → radians
+    r_lat1, r_lon1, r_lat2, r_lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    dlat = r_lat2 - r_lat1
+    dlon = r_lon2 - r_lon1
+
+    a = math.sin(dlat / 2) ** 2 + math.cos(r_lat1) * math.cos(r_lat2) * math.sin(dlon / 2) ** 2
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return _EARTH_RADIUS_KM * c
 
