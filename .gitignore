@@ -18,9 +18,12 @@ htmlcov/
 
 # Databases & local stores
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 backend/fraud.db
+backend/fraud.db*
 
 # Environment variables & secrets
 .env
